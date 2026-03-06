@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manila City Library</title>
+    <link rel="stylesheet" href="HOME.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-container">
+                <img src="LOGO.png" alt="Library Logo" class="logo">
+                <h1 class="library-title">Manila City Library</h1>
+                <button class="home-btn active"><span>Home</span></button>
+                <button class="borrowedreturned-btn"><span>Borrowed & Returned</span></button>
+                <select class="section-select">
+                    <option value="">All Sections</option>
+                </select>
+                <input type="text" class="search-input" placeholder="Search Here">
+                <button id="logoutBtn" class="logout-btn">Logout</button>
+            </div>
+        </header>
+    </div>
+
+    <main class="main-content">
+        <div id="expandedBookSection" class="expanded-book-section" style="display: none;">
+            <div class="expanded-book-container">
+                <img id="expandedImg" src="" alt="Book Cover" class="expanded-img">
+                <div class="expanded-details">
+                    <h2 id="expandedTitle"></h2>
+                    <h3 id="expandedAuthor"></h3>
+                    <div id="expandedDetailsContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="mostBorrowedSection">
+            <h2 class="home-section-title">Most Borrowed</h2>
+            <div class="carousel-wrapper">
+                <button class="carousel-arrow" id="carouselPrev">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                    </svg>
+                </button>
+                <div class="carousel-viewport">
+                    <div class="carousel-track" id="carouselTrack"></div>
+                </div>
+                <button class="carousel-arrow" id="carouselNext">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <h2 class="home-section-title" style="margin-top: 50px;">Available Books</h2>
+        <div id="bookList" class="book-grid"></div>
+    </main>
+
+    <!-- USER MODAL -->
+    <div class="modal" id="userModal" aria-hidden="true">
+        <div class="modal-content">
+            <button class="close" aria-label="Close">&times;</button>
+            <h2 class="modal-title">Borrowed & Returned Access Form</h2>
+            <form class="form-user" id="borrowAccessForm">
+                <div class="form-group">
+                    <input type="number" id="control-no" name="CONTROL_NOtxtb" placeholder="012345" required>
+                    <label for="control-no">Control No</label>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="fullname" name="FULLNAMEtxtb" placeholder="First M. Last" required>
+                    <label for="fullname">Fullname</label>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="contact-no" name="CONTACT_NOtxtb" placeholder="09123456789" pattern="09\d{9}" maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,11)" required>
+                    <label for="contact-no">Contact No</label>
+                </div>
+                <div class="form-group email-group">
+                    <input type="email" id="signup-email" name="EMAILtxtb" placeholder="Email@gmail.com" required>
+                    <label for="signup-email">Email</label>
+                    <button id="sendBtn">Send OTP</button>
+                </div>
+                <div id="sendStatus"></div>
+                <div class="form-group" id="otp-group" style="display: none;">
+                    <input type="text" id="otpuser" placeholder="Enter OTP" maxlength="6" required>
+                </div>
+                <div class="form-group another-otp" id="resend-group" style="display: none;">
+                    <label for="otpanother">Not received yet?</label>
+                    <button class="otpanother-btn"><span>Resend Verification Code</span></button>
+                </div>
+                <div class="agree-box">
+                    <input type="checkbox" id="agreeCheck" disabled>
+                    <label for="agreeCheck">
+                        I agree to the <a href="#" id="openTerms">Terms & Conditions</a>
+                    </label>
+                    <div class="modal-actions">
+                        <button type="submit" class="submit-btn">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TERMS MODAL -->
+    <div class="modal" id="termsModal" aria-hidden="true">
+        <div class="modal-content terms-content">
+            <button class="close close-terms" aria-label="Close">&times;</button>
+            <h2>📚 Manila Public Library – Terms & Conditions</h2>
+            <div class="terms-box">
+                <p><strong>Welcome to the Manila Public Library Online System!</strong></p>
+                <p>By using this website, you agree to the following terms:</p>
+                <ul>
+                    <li>You must first have a valid <strong>Library ID</strong> before you can view or access library activities.</li>
+                    <li>This site allows users to view <strong>available books, borrow & return records</strong>, and featured library materials.</li>
+                    <li>You will need to enter your <strong>Control Number, Full Name, Contact Number,</strong> and <strong>Email</strong> to access your account.</li>
+                    <li>Your information is securely stored in the library's database and used only for library services and communication purposes.</li>
+                    <li>Do not share or use another person's account information. Unauthorized access or misuse may result in account restriction.</li>
+                    <li>Book availability and borrowing policies may change without prior notice.</li>
+                    <li>The library is not liable for system downtime, inaccurate data due to updates, or user input errors.</li>
+                    <li>By clicking "I Agree," you confirm that you have read and accepted these Terms & Conditions.</li>
+                </ul>
+            </div>
+            <div class="modal-actions">
+                <button id="agreeBtn" class="agree-btn">I Agree</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FULL DETAILS MODAL -->
+    <div class="modal" id="fullDetailsModal" aria-hidden="true">
+        <div class="modal-content full-details-content">
+            <button class="close" aria-label="Close">&times;</button>
+            <h2 id="fullDetailsTitle"></h2>
+            <div id="fullDetailsBody"></div>
+        </div>
+    </div>
+
+    <h2 id="borrowedTitle" style="display:none">Borrowed Books</h2>
+    <table class="library-table" id="borrowedBooksTable" style="display:none">
+        <thead>
+            <tr>
+                <th>Fullname</th>
+                <th>Title</th>
+                <th>Section</th>
+                <th>Borrowed Date</th>
+                <th>Return Date</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2 id="returnedTitle" style="display:none">Returned Books</h2>
+    <table class="library-table" id="returnedBooksTable" style="display:none">
+        <thead>
+            <tr>
+                <th>Fullname</th>
+                <th>Title</th>
+                <th>Section</th>
+                <th>Borrowed Date</th>
+                <th>Returned Date</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <div id="pageNavigation" class="page-navigation">
+        <button id="prevBtn" class="nav-arrow" disabled>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+            </svg>
+        </button>
+        <div class="page-info">
+            Page <span id="currentPageNum">1</span> of <span id="totalPagesNum">1</span>
+        </div>
+        <button id="nextBtn" class="nav-arrow" disabled>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+            </svg>
+        </button>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-logo">
+                <div class="logo-circle">
+                    <img src="LOGO.png" alt="Library Logo">
+                </div>
+            </div>
+            <div class="footer-about">
+                <h3>Manila City Library</h3>
+                <p><img src="LOCATION.png" alt="Location Icon" class="footer-icon"> 800 Taft Avenue, Manila, Philippines</p>
+                <p><img src="CONTACT.png" alt="Phone Icon" class="footer-icon"> 253102618</p>
+                <p><img src="EMAIL.png" alt="Email Icon" class="footer-icon"> citylibrary@manila.gov.ph</p>
+                <a href="https://sites.google.com/view/manilacitylibrary/" target="_blank" class="about-us-link">About Us</a>
+            </div>
+            <div class="footer-contact">
+                <h3>Connect With Us</h3>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/ManilaCityLib" class="social-link">
+                        <div class="social-icon facebook"><img src="FACEBOOK.png" alt="Facebook" width="20" height="20"></div>
+                        <span>Facebook</span>
+                    </a>
+                    <a href="https://www.instagram.com/manilacitylib" class="social-link">
+                        <div class="social-icon instagram"><img src="INSTAGRAM.png" alt="Instagram" width="20" height="20"></div>
+                        <span>Instagram</span>
+                    </a>
+                    <a href="https://www.youtube.com/@manilacitylibraryofficial4760" class="social-link">
+                        <div class="social-icon youtube"><img src="YOUTUBE.png" alt="Youtube" width="20" height="20"></div>
+                        <span>Youtube</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Manila City Library | All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+    // ============================================================
+    //  SAMPLE DATA — hardcoded, no database needed
+    // ============================================================
+
+    const SAMPLE_BOOKS = [
+        { id:1,  TITLEdtb:"Noli Me Tangere",                              AUTHORdtb:"Jose Rizal",                                                   EDITORdtb:"",                 EDITIONdtb:"1st",              PLACE_OF_PUBLICATIONdtb:"Manila",         PUBLISHER_NAMEdtb:"National Bookstore",                 COPYRIGHT_YEARSdtb:"1887", SERIESdtb:"Rizal Classics", PHYSICAL_DESCRIPTIONdtb:"448 pages ; 21 cm",          NOTESdtb:"National hero of the Philippines. Required reading in all schools.", ISBNdtb:"978-971-08-0000-1", ISSNdtb:"", SECTIONdtb:"Filipiniana",       SUBJECTdtb:"Philippine Literature",             TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:5, CALL_NUMBERdtb:"FIL 899.21 R62n",      BOOK_BARCODEIDdtb:"MCL-FIL-0001", BOOK_IMAGEdtb:"" },
+        { id:2,  TITLEdtb:"El Filibusterismo",                            AUTHORdtb:"Jose Rizal",                                                   EDITORdtb:"",                 EDITIONdtb:"1st",              PLACE_OF_PUBLICATIONdtb:"Ghent",          PUBLISHER_NAMEdtb:"F. Meyer-Van Loo Press",              COPYRIGHT_YEARSdtb:"1891", SERIESdtb:"Rizal Classics", PHYSICAL_DESCRIPTIONdtb:"302 pages ; 21 cm",          NOTESdtb:"Sequel to Noli Me Tangere.",                                         ISBNdtb:"978-971-08-0000-2", ISSNdtb:"", SECTIONdtb:"Filipiniana",       SUBJECTdtb:"Philippine Literature",             TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:4, CALL_NUMBERdtb:"FIL 899.21 R62e",      BOOK_BARCODEIDdtb:"MCL-FIL-0002", BOOK_IMAGEdtb:"" },
+        { id:3,  TITLEdtb:"Florante at Laura",                            AUTHORdtb:"Francisco Balagtas",                                           EDITORdtb:"",                 EDITIONdtb:"2nd",              PLACE_OF_PUBLICATIONdtb:"Manila",         PUBLISHER_NAMEdtb:"Anvil Publishing",                   COPYRIGHT_YEARSdtb:"1838", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"180 pages ; 18 cm",          NOTESdtb:"Classic awit (song poem) of Philippine literature.",                  ISBNdtb:"978-971-27-0001-3", ISSNdtb:"", SECTIONdtb:"Filipiniana",       SUBJECTdtb:"Philippine Poetry",                 TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:3, CALL_NUMBERdtb:"FIL 899.21 B35f",      BOOK_BARCODEIDdtb:"MCL-FIL-0003", BOOK_IMAGEdtb:"" },
+        { id:4,  TITLEdtb:"Ibong Adarna",                                 AUTHORdtb:"Unknown (attr. Jose de la Cruz)",                              EDITORdtb:"",                 EDITIONdtb:"3rd",              PLACE_OF_PUBLICATIONdtb:"Manila",         PUBLISHER_NAMEdtb:"Rex Book Store",                     COPYRIGHT_YEARSdtb:"1900", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"210 pages ; 19 cm",          NOTESdtb:"Classic Filipino corrido.",                                           ISBNdtb:"978-971-23-0002-4", ISSNdtb:"", SECTIONdtb:"Filipiniana",       SUBJECTdtb:"Philippine Folklore",               TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:6, CALL_NUMBERdtb:"FIL 899.21 C78i",      BOOK_BARCODEIDdtb:"MCL-FIL-0004", BOOK_IMAGEdtb:"" },
+        { id:5,  TITLEdtb:"Mga Kwento ni Lola Basyang",                   AUTHORdtb:"Severino Reyes",                                               EDITORdtb:"",                 EDITIONdtb:"1st",              PLACE_OF_PUBLICATIONdtb:"Manila",         PUBLISHER_NAMEdtb:"Tahanan Books",                      COPYRIGHT_YEARSdtb:"1925", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"256 pages ; 20 cm",          NOTESdtb:"Collection of Filipino folk tales.",                                  ISBNdtb:"978-971-630-0005",  ISSNdtb:"", SECTIONdtb:"Filipiniana",       SUBJECTdtb:"Philippine Short Stories",          TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:4, CALL_NUMBERdtb:"FIL 899.21 R49m",      BOOK_BARCODEIDdtb:"MCL-FIL-0005", BOOK_IMAGEdtb:"" },
+        { id:6,  TITLEdtb:"Merriam-Webster Collegiate Dictionary",        AUTHORdtb:"Merriam-Webster Editorial Staff",                              EDITORdtb:"Frederick C. Mish",EDITIONdtb:"11th",             PLACE_OF_PUBLICATIONdtb:"Springfield, MA",PUBLISHER_NAMEdtb:"Merriam-Webster",                    COPYRIGHT_YEARSdtb:"2003", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"1664 pages ; 24 cm",         NOTESdtb:"Standard American English dictionary.",                               ISBNdtb:"978-0-87779-809-5", ISSNdtb:"", SECTIONdtb:"General Reference", SUBJECTdtb:"English Language — Dictionaries",   TYPE_OF_MATERIALdtb:"Reference Book",COPIESdtb:2, CALL_NUMBERdtb:"REF 423 M47",           BOOK_BARCODEIDdtb:"MCL-REF-0001", BOOK_IMAGEdtb:"" },
+        { id:7,  TITLEdtb:"The World Almanac and Book of Facts 2024",     AUTHORdtb:"Sarah Janssen",                                                EDITORdtb:"",                 EDITIONdtb:"2024 ed.",         PLACE_OF_PUBLICATIONdtb:"New York",       PUBLISHER_NAMEdtb:"World Almanac Books",                COPYRIGHT_YEARSdtb:"2024", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"1008 pages ; 28 cm",         NOTESdtb:"Annual reference compendium.",                                        ISBNdtb:"978-1-59-112310-0", ISSNdtb:"", SECTIONdtb:"General Reference", SUBJECTdtb:"Almanacs",                          TYPE_OF_MATERIALdtb:"Reference Book",COPIESdtb:2, CALL_NUMBERdtb:"REF 030 W92 2024",      BOOK_BARCODEIDdtb:"MCL-REF-0002", BOOK_IMAGEdtb:"" },
+        { id:8,  TITLEdtb:"Philippine Atlas",                             AUTHORdtb:"National Mapping and Resource Information Authority",          EDITORdtb:"",                 EDITIONdtb:"4th",              PLACE_OF_PUBLICATIONdtb:"Manila",         PUBLISHER_NAMEdtb:"NAMRIA",                             COPYRIGHT_YEARSdtb:"2020", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"312 pages : maps ; 35 cm",   NOTESdtb:"Official atlas of the Philippines.",                                  ISBNdtb:"",                  ISSNdtb:"", SECTIONdtb:"General Reference", SUBJECTdtb:"Philippines — Maps",                TYPE_OF_MATERIALdtb:"Reference Book",COPIESdtb:1, CALL_NUMBERdtb:"REF 912.599 P55 2020",  BOOK_BARCODEIDdtb:"MCL-REF-0003", BOOK_IMAGEdtb:"" },
+        { id:9,  TITLEdtb:"Encyclopedia of Philippine Art",               AUTHORdtb:"Nicanor Tiongson",                                             EDITORdtb:"",                 EDITIONdtb:"1st",              PLACE_OF_PUBLICATIONdtb:"Manila",         PUBLISHER_NAMEdtb:"Cultural Center of the Philippines", COPYRIGHT_YEARSdtb:"1994", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"10 volumes ; 29 cm",         NOTESdtb:"Comprehensive reference on Philippine arts and culture.",             ISBNdtb:"971-780-014-X",     ISSNdtb:"", SECTIONdtb:"General Reference", SUBJECTdtb:"Arts — Philippines — Encyclopedias",TYPE_OF_MATERIALdtb:"Reference Book",COPIESdtb:1, CALL_NUMBERdtb:"REF 700.9599 E53",      BOOK_BARCODEIDdtb:"MCL-REF-0004", BOOK_IMAGEdtb:"" },
+        { id:10, TITLEdtb:"Rogets International Thesaurus",               AUTHORdtb:"Barbara Ann Kipfer",                                           EDITORdtb:"",                 EDITIONdtb:"7th",              PLACE_OF_PUBLICATIONdtb:"New York",       PUBLISHER_NAMEdtb:"HarperCollins",                      COPYRIGHT_YEARSdtb:"2010", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"1312 pages ; 24 cm",         NOTESdtb:"Word-finder and synonym dictionary.",                                 ISBNdtb:"978-0-06-117355-3", ISSNdtb:"", SECTIONdtb:"General Reference", SUBJECTdtb:"English Language — Synonyms",       TYPE_OF_MATERIALdtb:"Reference Book",COPIESdtb:3, CALL_NUMBERdtb:"REF 423.1 R72 2010",    BOOK_BARCODEIDdtb:"MCL-REF-0005", BOOK_IMAGEdtb:"" },
+        { id:11, TITLEdtb:"Introduction to the Theory of Computation",    AUTHORdtb:"Michael Sipser",                                               EDITORdtb:"",                 EDITIONdtb:"3rd",              PLACE_OF_PUBLICATIONdtb:"Boston",         PUBLISHER_NAMEdtb:"Cengage Learning",                   COPYRIGHT_YEARSdtb:"2013", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"504 pages ; 24 cm",          NOTESdtb:"Standard textbook for computer science theory.",                      ISBNdtb:"978-1-133-18779-0", ISSNdtb:"", SECTIONdtb:"Science & Technology",SUBJECTdtb:"Computer Science",                  TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:3, CALL_NUMBERdtb:"SCI 004.01 S57 2013",  BOOK_BARCODEIDdtb:"MCL-SCI-0001", BOOK_IMAGEdtb:"" },
+        { id:12, TITLEdtb:"Biology: The Unity and Diversity of Life",     AUTHORdtb:"Cecie Starr; Ralph Taggart; Christine Evers; Lisa Starr",      EDITORdtb:"",                 EDITIONdtb:"13th",             PLACE_OF_PUBLICATIONdtb:"Belmont, CA",    PUBLISHER_NAMEdtb:"Brooks/Cole Cengage Learning",       COPYRIGHT_YEARSdtb:"2013", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"1104 pages : ill. ; 28 cm",  NOTESdtb:"Full-color biology textbook for college level.",                      ISBNdtb:"978-1-285-08632-1", ISSNdtb:"", SECTIONdtb:"Science & Technology",SUBJECTdtb:"Biology",                           TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:4, CALL_NUMBERdtb:"SCI 570 S73 2013",     BOOK_BARCODEIDdtb:"MCL-SCI-0002", BOOK_IMAGEdtb:"" },
+        { id:13, TITLEdtb:"Physics for Scientists and Engineers",         AUTHORdtb:"Raymond A. Serway; John W. Jewett",                            EDITORdtb:"",                 EDITIONdtb:"9th",              PLACE_OF_PUBLICATIONdtb:"Boston",         PUBLISHER_NAMEdtb:"Cengage Learning",                   COPYRIGHT_YEARSdtb:"2014", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"1424 pages : ill. ; 29 cm",  NOTESdtb:"Comprehensive introductory physics textbook.",                        ISBNdtb:"978-1-285-07119-8", ISSNdtb:"", SECTIONdtb:"Science & Technology",SUBJECTdtb:"Physics",                           TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:3, CALL_NUMBERdtb:"SCI 530 S47 2014",     BOOK_BARCODEIDdtb:"MCL-SCI-0003", BOOK_IMAGEdtb:"" },
+        { id:14, TITLEdtb:"Chemistry: The Central Science",               AUTHORdtb:"Theodore E. Brown; H. Eugene LeMay; Bruce E. Bursten",         EDITORdtb:"",                 EDITIONdtb:"14th",             PLACE_OF_PUBLICATIONdtb:"New York",       PUBLISHER_NAMEdtb:"Pearson",                            COPYRIGHT_YEARSdtb:"2018", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"1248 pages : ill. ; 28 cm",  NOTESdtb:"Leading general chemistry textbook.",                                 ISBNdtb:"978-0-134-41412-3", ISSNdtb:"", SECTIONdtb:"Science & Technology",SUBJECTdtb:"Chemistry",                         TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:3, CALL_NUMBERdtb:"SCI 540 B76 2018",     BOOK_BARCODEIDdtb:"MCL-SCI-0004", BOOK_IMAGEdtb:"" },
+        { id:15, TITLEdtb:"Environmental Science: Toward a Sustainable Future",AUTHORdtb:"Richard T. Wright; Dorothy Boorse",                       EDITORdtb:"",                 EDITIONdtb:"12th",             PLACE_OF_PUBLICATIONdtb:"New Jersey",     PUBLISHER_NAMEdtb:"Pearson Education",                  COPYRIGHT_YEARSdtb:"2014", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"720 pages : ill. ; 28 cm",   NOTESdtb:"Environmental issues and sustainability.",                            ISBNdtb:"978-0-321-89742-8", ISSNdtb:"", SECTIONdtb:"Science & Technology",SUBJECTdtb:"Environmental Science",             TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:2, CALL_NUMBERdtb:"SCI 363.7 W75 2014",   BOOK_BARCODEIDdtb:"MCL-SCI-0005", BOOK_IMAGEdtb:"" },
+        { id:16, TITLEdtb:"Introduction to Sociology",                    AUTHORdtb:"Anthony Giddens; Mitchell Duneier; Richard P. Appelbaum",      EDITORdtb:"",                 EDITIONdtb:"9th",              PLACE_OF_PUBLICATIONdtb:"New York",       PUBLISHER_NAMEdtb:"W. W. Norton & Company",             COPYRIGHT_YEARSdtb:"2016", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"784 pages : ill. ; 24 cm",   NOTESdtb:"Best-selling introductory sociology textbook.",                       ISBNdtb:"978-0-393-26357-5", ISSNdtb:"", SECTIONdtb:"Social Science",    SUBJECTdtb:"Sociology",                         TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:4, CALL_NUMBERdtb:"SOC 301 G53 2016",     BOOK_BARCODEIDdtb:"MCL-SOC-0001", BOOK_IMAGEdtb:"" },
+        { id:17, TITLEdtb:"Philippine Politics and Governance",           AUTHORdtb:"Alexander Magno",                                              EDITORdtb:"",                 EDITIONdtb:"2nd",              PLACE_OF_PUBLICATIONdtb:"Manila",         PUBLISHER_NAMEdtb:"Rex Book Store",                     COPYRIGHT_YEARSdtb:"2019", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"380 pages ; 23 cm",          NOTESdtb:"Textbook on Philippine political science for college students.",      ISBNdtb:"978-971-23-9876-1", ISSNdtb:"", SECTIONdtb:"Social Science",    SUBJECTdtb:"Political Science — Philippines",   TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:5, CALL_NUMBERdtb:"SOC 320.9599 M34 2019",BOOK_BARCODEIDdtb:"MCL-SOC-0002", BOOK_IMAGEdtb:"" },
+        { id:18, TITLEdtb:"Economics: Principles, Problems, and Policies",AUTHORdtb:"Campbell R. McConnell; Stanley L. Brue; Sean M. Flynn",        EDITORdtb:"",                 EDITIONdtb:"21st",             PLACE_OF_PUBLICATIONdtb:"New York",       PUBLISHER_NAMEdtb:"McGraw-Hill Education",              COPYRIGHT_YEARSdtb:"2018", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"832 pages : ill. ; 28 cm",   NOTESdtb:"Leading introductory economics textbook.",                            ISBNdtb:"978-1-259-91572-1", ISSNdtb:"", SECTIONdtb:"Social Science",    SUBJECTdtb:"Economics",                         TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:3, CALL_NUMBERdtb:"SOC 330 M33 2018",     BOOK_BARCODEIDdtb:"MCL-SOC-0003", BOOK_IMAGEdtb:"" },
+        { id:19, TITLEdtb:"Philippine History: A Nation Defined",         AUTHORdtb:"Danilo Madrid Gerona",                                         EDITORdtb:"",                 EDITIONdtb:"1st",              PLACE_OF_PUBLICATIONdtb:"Quezon City",    PUBLISHER_NAMEdtb:"Ateneo de Manila University Press",  COPYRIGHT_YEARSdtb:"2005", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"450 pages : ill., maps ; 24 cm",NOTESdtb:"Scholarly account of Philippine history from pre-colonial period.",  ISBNdtb:"978-971-550-476-0", ISSNdtb:"", SECTIONdtb:"Social Science",    SUBJECTdtb:"Philippines — History",             TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:4, CALL_NUMBERdtb:"SOC 959.9 G47 2005",   BOOK_BARCODEIDdtb:"MCL-SOC-0004", BOOK_IMAGEdtb:"" },
+        { id:20, TITLEdtb:"Sociology in the Philippines",                 AUTHORdtb:"Ana Maria L. Tabunda; Jimmy M. Libre",                         EDITORdtb:"",                 EDITIONdtb:"3rd",              PLACE_OF_PUBLICATIONdtb:"Manila",         PUBLISHER_NAMEdtb:"National Bookstore",                 COPYRIGHT_YEARSdtb:"2017", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"310 pages ; 23 cm",          NOTESdtb:"Philippine context sociology textbook.",                              ISBNdtb:"978-971-08-1234-5", ISSNdtb:"", SECTIONdtb:"Social Science",    SUBJECTdtb:"Sociology — Philippines",           TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:3, CALL_NUMBERdtb:"SOC 301.09599 T33 2017",BOOK_BARCODEIDdtb:"MCL-SOC-0005", BOOK_IMAGEdtb:"" },
+        { id:21, TITLEdtb:"To Kill a Mockingbird",                        AUTHORdtb:"Harper Lee",                                                   EDITORdtb:"",                 EDITIONdtb:"1st",              PLACE_OF_PUBLICATIONdtb:"Philadelphia",   PUBLISHER_NAMEdtb:"J. B. Lippincott & Co.",             COPYRIGHT_YEARSdtb:"1960", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"281 pages ; 21 cm",          NOTESdtb:"Pulitzer Prize-winning novel. Classic American literature.",          ISBNdtb:"978-0-06-112008-4", ISSNdtb:"", SECTIONdtb:"Literature",        SUBJECTdtb:"American Fiction",                  TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:5, CALL_NUMBERdtb:"LIT 813.54 L48t",      BOOK_BARCODEIDdtb:"MCL-LIT-0001", BOOK_IMAGEdtb:"" },
+        { id:22, TITLEdtb:"One Hundred Years of Solitude",                AUTHORdtb:"Gabriel Garcia Marquez",                                       EDITORdtb:"",                 EDITIONdtb:"1st (English trans.)",PLACE_OF_PUBLICATIONdtb:"New York",      PUBLISHER_NAMEdtb:"Harper & Row",                       COPYRIGHT_YEARSdtb:"1970", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"422 pages ; 22 cm",          NOTESdtb:"Nobel Prize-winning magical realism novel.",                          ISBNdtb:"978-0-06-019108-8", ISSNdtb:"", SECTIONdtb:"Literature",        SUBJECTdtb:"Latin American Fiction",            TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:3, CALL_NUMBERdtb:"LIT 863 G37o",         BOOK_BARCODEIDdtb:"MCL-LIT-0002", BOOK_IMAGEdtb:"" },
+        { id:23, TITLEdtb:"The Great Gatsby",                             AUTHORdtb:"F. Scott Fitzgerald",                                          EDITORdtb:"",                 EDITIONdtb:"1st",              PLACE_OF_PUBLICATIONdtb:"New York",       PUBLISHER_NAMEdtb:"Charles Scribner's Sons",            COPYRIGHT_YEARSdtb:"1925", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"180 pages ; 20 cm",          NOTESdtb:"Classic American novel of the Jazz Age.",                             ISBNdtb:"978-0-7432-7356-5", ISSNdtb:"", SECTIONdtb:"Literature",        SUBJECTdtb:"American Fiction",                  TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:4, CALL_NUMBERdtb:"LIT 813.52 F58g",      BOOK_BARCODEIDdtb:"MCL-LIT-0003", BOOK_IMAGEdtb:"" },
+        { id:24, TITLEdtb:"Banaag at Sikat",                              AUTHORdtb:"Lope K. Santos",                                               EDITORdtb:"",                 EDITIONdtb:"1st",              PLACE_OF_PUBLICATIONdtb:"Manila",         PUBLISHER_NAMEdtb:"Limbagang Tagalog",                  COPYRIGHT_YEARSdtb:"1906", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"320 pages ; 20 cm",          NOTESdtb:"First Filipino social realist novel in Tagalog.",                     ISBNdtb:"978-971-00-0001-1", ISSNdtb:"", SECTIONdtb:"Literature",        SUBJECTdtb:"Philippine Literature",             TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:3, CALL_NUMBERdtb:"LIT 899.21 S36b",      BOOK_BARCODEIDdtb:"MCL-LIT-0004", BOOK_IMAGEdtb:"" },
+        { id:25, TITLEdtb:"Pride and Prejudice",                          AUTHORdtb:"Jane Austen",                                                  EDITORdtb:"",                 EDITIONdtb:"1st",              PLACE_OF_PUBLICATIONdtb:"London",         PUBLISHER_NAMEdtb:"T. Egerton",                         COPYRIGHT_YEARSdtb:"1813", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"432 pages ; 21 cm",          NOTESdtb:"Classic British Regency-era novel.",                                  ISBNdtb:"978-0-14-143951-8", ISSNdtb:"", SECTIONdtb:"Literature",        SUBJECTdtb:"British Fiction",                   TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:4, CALL_NUMBERdtb:"LIT 823.7 A98p",       BOOK_BARCODEIDdtb:"MCL-LIT-0005", BOOK_IMAGEdtb:"" },
+        { id:26, TITLEdtb:"Harrison's Principles of Internal Medicine",   AUTHORdtb:"Dennis L. Kasper; Anthony S. Fauci; Stephen L. Hauser",        EDITORdtb:"",                 EDITIONdtb:"20th",             PLACE_OF_PUBLICATIONdtb:"New York",       PUBLISHER_NAMEdtb:"McGraw-Hill Education",              COPYRIGHT_YEARSdtb:"2018", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"4100 pages ; 30 cm",         NOTESdtb:"Standard reference in internal medicine.",                            ISBNdtb:"978-1-259-64403-0", ISSNdtb:"", SECTIONdtb:"Health & Medicine", SUBJECTdtb:"Internal Medicine",                 TYPE_OF_MATERIALdtb:"Reference Book",COPIESdtb:2, CALL_NUMBERdtb:"MED 616 H37 2018",     BOOK_BARCODEIDdtb:"MCL-MED-0001", BOOK_IMAGEdtb:"" },
+        { id:27, TITLEdtb:"Anatomy and Physiology",                       AUTHORdtb:"Elaine N. Marieb; Katja Hoehn",                                EDITORdtb:"",                 EDITIONdtb:"10th",             PLACE_OF_PUBLICATIONdtb:"New York",       PUBLISHER_NAMEdtb:"Pearson Education",                  COPYRIGHT_YEARSdtb:"2016", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"1264 pages : ill. ; 28 cm",  NOTESdtb:"College-level anatomy and physiology textbook.",                      ISBNdtb:"978-0-134-02399-3", ISSNdtb:"", SECTIONdtb:"Health & Medicine", SUBJECTdtb:"Human Anatomy",                     TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:4, CALL_NUMBERdtb:"MED 611 M37 2016",     BOOK_BARCODEIDdtb:"MCL-MED-0002", BOOK_IMAGEdtb:"" },
+        { id:28, TITLEdtb:"Community Health Nursing in the Philippines",  AUTHORdtb:"Zenaida Natividad Cabanero-Versoza",                           EDITORdtb:"",                 EDITIONdtb:"5th",              PLACE_OF_PUBLICATIONdtb:"Manila",         PUBLISHER_NAMEdtb:"Educational Publishing House",       COPYRIGHT_YEARSdtb:"2012", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"560 pages ; 24 cm",          NOTESdtb:"Standard nursing textbook for Philippine community health programs.",  ISBNdtb:"978-971-98-0001-2", ISSNdtb:"", SECTIONdtb:"Health & Medicine", SUBJECTdtb:"Community Health Nursing",          TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:5, CALL_NUMBERdtb:"MED 610.73 C33 2012",  BOOK_BARCODEIDdtb:"MCL-MED-0003", BOOK_IMAGEdtb:"" },
+        { id:29, TITLEdtb:"Mental Health Nursing",                        AUTHORdtb:"Mary C. Townsend",                                             EDITORdtb:"",                 EDITIONdtb:"8th",              PLACE_OF_PUBLICATIONdtb:"Philadelphia",   PUBLISHER_NAMEdtb:"F.A. Davis Company",                 COPYRIGHT_YEARSdtb:"2015", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"960 pages : ill. ; 27 cm",   NOTESdtb:"Comprehensive psychiatric and mental health nursing textbook.",        ISBNdtb:"978-0-8036-3927-3", ISSNdtb:"", SECTIONdtb:"Health & Medicine", SUBJECTdtb:"Psychiatric Nursing",               TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:3, CALL_NUMBERdtb:"MED 616.89 T69 2015",  BOOK_BARCODEIDdtb:"MCL-MED-0004", BOOK_IMAGEdtb:"" },
+        { id:30, TITLEdtb:"Nutrition and Diet Therapy",                   AUTHORdtb:"Corinne Cataldo; Mary B. Rolfes; Sharon Rady Rolfes",          EDITORdtb:"",                 EDITIONdtb:"9th",              PLACE_OF_PUBLICATIONdtb:"Belmont, CA",    PUBLISHER_NAMEdtb:"Wadsworth Cengage Learning",         COPYRIGHT_YEARSdtb:"2014", SERIESdtb:"",               PHYSICAL_DESCRIPTIONdtb:"816 pages : ill. ; 27 cm",   NOTESdtb:"Dietetics and clinical nutrition textbook.",                          ISBNdtb:"978-1-285-07003-0", ISSNdtb:"", SECTIONdtb:"Health & Medicine", SUBJECTdtb:"Nutrition",                         TYPE_OF_MATERIALdtb:"Book",         COPIESdtb:3, CALL_NUMBERdtb:"MED 613.2 C38 2014",   BOOK_BARCODEIDdtb:"MCL-MED-0006", BOOK_IMAGEdtb:"" },
+    ];
+
+    const SAMPLE_USERS = [
+        { CONTROL_NOdtb:"100001", FULLNAMEdtb:"Juan D. Dela Cruz",    CONTACTdtb:"09171234567", EMAILdtb:"juan.delacruz@gmail.com" },
+        { CONTROL_NOdtb:"100002", FULLNAMEdtb:"Maria C. Santos",       CONTACTdtb:"09182345678", EMAILdtb:"maria.santos@yahoo.com"   },
+        { CONTROL_NOdtb:"100003", FULLNAMEdtb:"Pedro B. Reyes",        CONTACTdtb:"09193456789", EMAILdtb:"pedro.reyes@gmail.com"    },
+        { CONTROL_NOdtb:"100004", FULLNAMEdtb:"Ana L. Garcia",         CONTACTdtb:"09204567890", EMAILdtb:"ana.garcia@outlook.com"   },
+        { CONTROL_NOdtb:"100005", FULLNAMEdtb:"Carlos M. Mendoza",     CONTACTdtb:"09215678901", EMAILdtb:"carlos.mendoza@gmail.com" },
+        { CONTROL_NOdtb:"100006", FULLNAMEdtb:"Rosa T. Villanueva",    CONTACTdtb:"09226789012", EMAILdtb:"rosa.villanueva@gmail.com"},
+        { CONTROL_NOdtb:"100007", FULLNAMEdtb:"Miguel A. Torres",      CONTACTdtb:"09237890123", EMAILdtb:"miguel.torres@yahoo.com"  },
+        { CONTROL_NOdtb:"100008", FULLNAMEdtb:"Liza F. Bautista",      CONTACTdtb:"09248901234", EMAILdtb:"liza.bautista@gmail.com"  },
+        { CONTROL_NOdtb:"100009", FULLNAMEdtb:"Ramon E. Aquino",       CONTACTdtb:"09259012345", EMAILdtb:"ramon.aquino@outlook.com" },
+        { CONTROL_NOdtb:"100010", FULLNAMEdtb:"Carla N. Pascual",      CONTACTdtb:"09260123456", EMAILdtb:"carla.pascual@gmail.com"  },
+    ];
+
+    const SAMPLE_BORROWED = [
+        { CONTROL_NOdtb:"100001", FULLNAMEdtb:"Juan D. Dela Cruz",  BOOKNAMEdtb:"Noli Me Tangere",                               SECTIONdtb:"Filipiniana",       BORROWTIMEdtb:"2026-02-10", RETURNDATEdtb:"2026-02-24" },
+        { CONTROL_NOdtb:"100001", FULLNAMEdtb:"Juan D. Dela Cruz",  BOOKNAMEdtb:"El Filibusterismo",                             SECTIONdtb:"Filipiniana",       BORROWTIMEdtb:"2026-02-18", RETURNDATEdtb:"2026-03-04" },
+        { CONTROL_NOdtb:"100002", FULLNAMEdtb:"Maria C. Santos",    BOOKNAMEdtb:"Introduction to Sociology",                     SECTIONdtb:"Social Science",    BORROWTIMEdtb:"2026-02-20", RETURNDATEdtb:"2026-03-06" },
+        { CONTROL_NOdtb:"100002", FULLNAMEdtb:"Maria C. Santos",    BOOKNAMEdtb:"Philippine Politics and Governance",            SECTIONdtb:"Social Science",    BORROWTIMEdtb:"2026-02-25", RETURNDATEdtb:"2026-03-11" },
+        { CONTROL_NOdtb:"100003", FULLNAMEdtb:"Pedro B. Reyes",     BOOKNAMEdtb:"Biology: The Unity and Diversity of Life",      SECTIONdtb:"Science & Technology",BORROWTIMEdtb:"2026-02-15",RETURNDATEdtb:"2026-03-01" },
+        { CONTROL_NOdtb:"100004", FULLNAMEdtb:"Ana L. Garcia",      BOOKNAMEdtb:"Community Health Nursing in the Philippines",   SECTIONdtb:"Health & Medicine", BORROWTIMEdtb:"2026-02-22", RETURNDATEdtb:"2026-03-08" },
+        { CONTROL_NOdtb:"100004", FULLNAMEdtb:"Ana L. Garcia",      BOOKNAMEdtb:"Mental Health Nursing",                        SECTIONdtb:"Health & Medicine", BORROWTIMEdtb:"2026-02-28", RETURNDATEdtb:"2026-03-14" },
+        { CONTROL_NOdtb:"100005", FULLNAMEdtb:"Carlos M. Mendoza",  BOOKNAMEdtb:"To Kill a Mockingbird",                        SECTIONdtb:"Literature",        BORROWTIMEdtb:"2026-02-19", RETURNDATEdtb:"2026-03-05" },
+        { CONTROL_NOdtb:"100006", FULLNAMEdtb:"Rosa T. Villanueva", BOOKNAMEdtb:"Florante at Laura",                            SECTIONdtb:"Filipiniana",       BORROWTIMEdtb:"2026-02-27", RETURNDATEdtb:"2026-03-13" },
+        { CONTROL_NOdtb:"100007", FULLNAMEdtb:"Miguel A. Torres",   BOOKNAMEdtb:"Physics for Scientists and Engineers",         SECTIONdtb:"Science & Technology",BORROWTIMEdtb:"2026-02-26",RETURNDATEdtb:"2026-03-12" },
+        { CONTROL_NOdtb:"100008", FULLNAMEdtb:"Liza F. Bautista",   BOOKNAMEdtb:"Anatomy and Physiology",                       SECTIONdtb:"Health & Medicine", BORROWTIMEdtb:"2026-02-28", RETURNDATEdtb:"2026-03-14" },
+        { CONTROL_NOdtb:"100009", FULLNAMEdtb:"Ramon E. Aquino",    BOOKNAMEdtb:"Economics: Principles, Problems, and Policies", SECTIONdtb:"Social Science",    BORROWTIMEdtb:"2026-02-21", RETURNDATEdtb:"2026-03-07" },
+        { CONTROL_NOdtb:"100010", FULLNAMEdtb:"Carla N. Pascual",   BOOKNAMEdtb:"One Hundred Years of Solitude",                SECTIONdtb:"Literature",        BORROWTIMEdtb:"2026-02-24", RETURNDATEdtb:"2026-03-10" },
+    ];
+
+    const SAMPLE_RETURNED = [
+        { CONTROL_NOdtb:"100001", FULLNAMEdtb:"Juan D. Dela Cruz",  BOOKNAMEdtb:"Ibong Adarna",                                       SECTIONdtb:"Filipiniana",       BORROWTIMEdtb:"2026-01-05", RETURNDATEdtb:"2026-01-19" },
+        { CONTROL_NOdtb:"100001", FULLNAMEdtb:"Juan D. Dela Cruz",  BOOKNAMEdtb:"Pride and Prejudice",                                SECTIONdtb:"Literature",        BORROWTIMEdtb:"2026-01-20", RETURNDATEdtb:"2026-02-03" },
+        { CONTROL_NOdtb:"100002", FULLNAMEdtb:"Maria C. Santos",    BOOKNAMEdtb:"Philippine History: A Nation Defined",               SECTIONdtb:"Social Science",    BORROWTIMEdtb:"2026-01-08", RETURNDATEdtb:"2026-01-22" },
+        { CONTROL_NOdtb:"100002", FULLNAMEdtb:"Maria C. Santos",    BOOKNAMEdtb:"Merriam-Webster Collegiate Dictionary",              SECTIONdtb:"General Reference", BORROWTIMEdtb:"2026-01-15", RETURNDATEdtb:"2026-01-29" },
+        { CONTROL_NOdtb:"100003", FULLNAMEdtb:"Pedro B. Reyes",     BOOKNAMEdtb:"Introduction to the Theory of Computation",         SECTIONdtb:"Science & Technology",BORROWTIMEdtb:"2026-01-10",RETURNDATEdtb:"2026-01-24" },
+        { CONTROL_NOdtb:"100003", FULLNAMEdtb:"Pedro B. Reyes",     BOOKNAMEdtb:"Environmental Science: Toward a Sustainable Future", SECTIONdtb:"Science & Technology",BORROWTIMEdtb:"2026-01-25",RETURNDATEdtb:"2026-02-08" },
+        { CONTROL_NOdtb:"100004", FULLNAMEdtb:"Ana L. Garcia",      BOOKNAMEdtb:"Nutrition and Diet Therapy",                        SECTIONdtb:"Health & Medicine", BORROWTIMEdtb:"2026-01-12", RETURNDATEdtb:"2026-01-26" },
+        { CONTROL_NOdtb:"100005", FULLNAMEdtb:"Carlos M. Mendoza",  BOOKNAMEdtb:"The Great Gatsby",                                  SECTIONdtb:"Literature",        BORROWTIMEdtb:"2026-01-14", RETURNDATEdtb:"2026-01-28" },
+        { CONTROL_NOdtb:"100005", FULLNAMEdtb:"Carlos M. Mendoza",  BOOKNAMEdtb:"Banaag at Sikat",                                   SECTIONdtb:"Literature",        BORROWTIMEdtb:"2026-02-01", RETURNDATEdtb:"2026-02-15" },
+        { CONTROL_NOdtb:"100006", FULLNAMEdtb:"Rosa T. Villanueva", BOOKNAMEdtb:"Mga Kwento ni Lola Basyang",                        SECTIONdtb:"Filipiniana",       BORROWTIMEdtb:"2026-01-18", RETURNDATEdtb:"2026-02-01" },
+        { CONTROL_NOdtb:"100007", FULLNAMEdtb:"Miguel A. Torres",   BOOKNAMEdtb:"Chemistry: The Central Science",                    SECTIONdtb:"Science & Technology",BORROWTIMEdtb:"2026-01-22",RETURNDATEdtb:"2026-02-05" },
+        { CONTROL_NOdtb:"100008", FULLNAMEdtb:"Liza F. Bautista",   BOOKNAMEdtb:"Pharmacology and the Nursing Process",              SECTIONdtb:"Health & Medicine", BORROWTIMEdtb:"2026-01-28", RETURNDATEdtb:"2026-02-11" },
+        { CONTROL_NOdtb:"100009", FULLNAMEdtb:"Ramon E. Aquino",    BOOKNAMEdtb:"Sociology in the Philippines",                      SECTIONdtb:"Social Science",    BORROWTIMEdtb:"2026-01-30", RETURNDATEdtb:"2026-02-13" },
+        { CONTROL_NOdtb:"100010", FULLNAMEdtb:"Carla N. Pascual",   BOOKNAMEdtb:"Harrison's Principles of Internal Medicine",        SECTIONdtb:"Health & Medicine", BORROWTIMEdtb:"2026-02-03", RETURNDATEdtb:"2026-02-17" },
+        { CONTROL_NOdtb:"100006", FULLNAMEdtb:"Rosa T. Villanueva", BOOKNAMEdtb:"Encyclopedia of Philippine Art",                    SECTIONdtb:"General Reference", BORROWTIMEdtb:"2026-02-06", RETURNDATEdtb:"2026-02-20" },
+        { CONTROL_NOdtb:"100007", FULLNAMEdtb:"Miguel A. Torres",   BOOKNAMEdtb:"Rogets International Thesaurus",                    SECTIONdtb:"General Reference", BORROWTIMEdtb:"2026-02-08", RETURNDATEdtb:"2026-02-22" },
+        { CONTROL_NOdtb:"100008", FULLNAMEdtb:"Liza F. Bautista",   BOOKNAMEdtb:"The World Almanac and Book of Facts 2024",          SECTIONdtb:"General Reference", BORROWTIMEdtb:"2026-02-10", RETURNDATEdtb:"2026-02-24" },
+    ];
+    </script>
+
+    <script src="HOME_SAMPLE.js"></script>
+</body>
+</html>
